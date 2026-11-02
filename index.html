@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080a0f">
+  <meta name="description" content="词声：拍照或上传单词与词组，听英文释义或发音，写出对应英文的语音默写工具。">
+  <title>词声 · YTJ 语音默写</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2310151e'/%3E%3Cpath d='M16 33v-2M23 29v6M30 23v18M37 27v10M44 30v4M51 33v-2' stroke='%23c9ff4d' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <script>
+    (function () {
+      try {
+        var saved = JSON.parse(localStorage.getItem('ytj_settings_v1') || '{}');
+        document.documentElement.setAttribute('data-theme', saved.theme === 'light' ? 'light' : 'dark');
+      } catch (error) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+<body data-screen="setup">
+
+  <svg class="svg-sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-speaker" viewBox="0 0 24 24">
+      <path d="M11 5 6 9H3v6h3l5 4V5Z"/>
+      <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+      <path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+    </symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24">
+      <path d="M12 16V4"/>
+      <path d="m7 9 5-5 5 5"/>
+      <path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="7"/>
+      <path d="m20 20-4-4"/>
+    </symbol>
+    <symbol id="i-star" viewBox="0 0 24 24">
+      <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/>
+    </symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24">
+      <path d="M12 20h9"/>
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+    </symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24">
+      <path d="M4 7h16"/>
+      <path d="M10 11v6M14 11v6"/>
+      <path d="M6 7l1 13h10l1-13"/>
+      <path d="M9 7V4h6v3"/>
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24">
+      <path d="M12 5v14M5 12h14"/>
+    </symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24">
+      <path d="M20 11a8 8 0 1 0-2.3 6.5"/>
+      <path d="M20 4v7h-7"/>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24">
+      <path d="M12 4v12"/>
+      <path d="m7 11 5 5 5-5"/>
+      <path d="M4 20h16"/>
+    </symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24">
+      <path d="M4 8h10M18 8h2M4 16h2M10 16h10"/>
+      <circle cx="16" cy="8" r="2"/>
+      <circle cx="8" cy="16" r="2"/>
+    </symbol>
+    <symbol id="i-help" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M9.6 9a2.5 2.5 0 1 1 4 2c-.8.6-1.6 1.1-1.6 2.3"/>
+      <path d="M12 17h.01"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24">
+      <rect x="5" y="10" width="14" height="10" rx="2"/>
+      <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+    </symbol>
+    <symbol id="i-headphones" viewBox="0 0 24 24">
+      <path d="M4 14v-2a8 8 0 0 1 16 0v2"/>
+      <path d="M4 14h3v5H5a1 1 0 0 1-1-1v-4ZM20 14h-3v5h2a1 1 0 0 0 1-1v-4Z"/>
+    </symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24">
+      <path d="m12 3 1.2 3.8L17 8l-3.8 1.2L12 13l-1.2-3.8L7 8l3.8-1.2L12 3Z"/>
+      <path d="m18.5 14 .8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/>
+      <path d="m5.5 13 .6 1.7 1.7.6-1.7.6L5.5 18l-.6-1.7-1.7-.6 1.7-.6.6-1.7Z"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="m5 12 4.5 4.5L19 7"/>
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 24 24">
+      <path d="M6 6l12 12M18 6 6 18"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M5 12h14"/>
+      <path d="m14 7 5 5-5 5"/>
+    </symbol>
+    <symbol id="i-play" viewBox="0 0 24 24">
+      <path d="M8 5v14l11-7Z" fill="currentColor" stroke="none"/>
+    </symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24">
+      <path d="M8 5v14M16 5v14" stroke-width="3"/>
+    </symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24">
+      <path d="M4 9v6h4l5 4V5L8 9H4Z"/>
+      <path d="M16 9a4 4 0 0 1 0 6"/>
+      <path d="M18.5 6.5a8 8 0 0 1 0 11"/>
+    </symbol>
+    <symbol id="i-book" viewBox="0 0 24 24">
+      <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"/>
+      <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20"/>
+    </symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24">
+      <path d="M12 21c4 0 7-2.7 7-6.4 0-3-2.1-5.2-3.5-6.8-1.1-1.2-2-2.8-2-4.8-3.1 1.2-5 3.5-5 6.2 0 1.2.4 2 1 2.8-.9 0-1.7-.4-2.4-1.1C6.4 12 6 13.2 6 14.6 6 18.3 8.6 21 12 21Z"/>
+    </symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24">
+      <path d="m9 5 7 7-7 7"/>
+    </symbol>
+    <symbol id="i-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M12 11v5M12 8h.01"/>
+    </symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24">
+      <rect x="9" y="3" width="6" height="11" rx="3"/>
+      <path d="M5 11a7 7 0 0 0 14 0"/>
+      <path d="M12 18v3"/>
+    </symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24">
+      <path d="M4.5 8.5h3l1.4-2h6.2l1.4 2h3a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17v-7a1.5 1.5 0 0 1 1.5-1.5Z"/>
+      <circle cx="12" cy="13" r="3.2"/>
+    </symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/>
+    </symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24">
+      <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
+    </symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24">
+      <path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 10v4M21 12h1"/>
+    </symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="brand" id="brand-home" aria-label="回到首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg class="icon"><use href="#i-wave"></use></svg>
+        </span>
+        <span class="brand-text">
+          <strong>词声</strong>
+          <small>YTJ 语音默写</small>
+        </span>
+      </button>
+      <div class="top-actions">
+        <span class="local-badge"><svg class="icon"><use href="#i-lock"></use></svg>数据仅存本机</span>
+        <button class="btn btn-quiet btn-sm theme-toggle" id="btn-theme" aria-label="切换到浅色主题" title="切换主题">
+          <svg class="icon theme-icon-sun"><use href="#i-sun"></use></svg>
+          <svg class="icon theme-icon-moon"><use href="#i-moon"></use></svg>
+        </button>
+        <button class="btn btn-quiet btn-sm" id="btn-help">
+          <svg class="icon"><use href="#i-help"></use></svg>使用说明
+        </button>
+        <button class="btn btn-quiet btn-sm" id="btn-settings">
+          <svg class="icon"><use href="#i-settings"></use></svg>设置
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ============================ 设置 / 词库 ============================ -->
+    <section class="screen is-active" id="screen-setup" aria-labelledby="hero-title">
+      <div class="setup-shell">
+
+        <div class="resume-banner" id="resume-banner" hidden>
+          <div class="resume-icon"><svg class="icon"><use href="#i-play"></use></svg></div>
+          <div class="resume-copy">
+            <strong>上次测试还没结束</strong>
+            <span id="resume-meta">进行到第 1 题</span>
+          </div>
+          <div class="resume-actions">
+            <button class="btn btn-primary btn-sm" id="btn-resume">继续测试</button>
+            <button class="btn btn-quiet btn-sm" id="btn-discard-session">放弃</button>
+          </div>
+        </div>
+
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="pulse-dot"></span>VOICE DICTATION STUDIO</p>
+            <h1 id="hero-title">听见英语，<br><em>写出记忆。</em></h1>
+            <p class="hero-lead">
+              拍照或上传词表，听英文释义和发音，把答案写出来。系统自动挑词、即时判分，错题可以马上重练。
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="btn-hero-start">
+                <svg class="icon"><use href="#i-play"></use></svg>
+                <span id="btn-hero-start-label">开始语音测试</span>
+              </button>
+              <button class="btn btn-ghost" id="btn-hero-photo">
+                <svg class="icon"><use href="#i-camera"></use></svg>拍照导入
+              </button>
+            </div>
+            <div class="hero-tags">
+              <span><svg class="icon"><use href="#i-headphones"></use></svg>纯耳听 · 不泄题</span>
+              <span><svg class="icon"><use href="#i-camera"></use></svg>拍照识别 · 本机完成</span>
+              <span><svg class="icon"><use href="#i-sparkles"></use></svg>自动选题 · 自动判分</span>
+              <span><svg class="icon"><use href="#i-lock"></use></svg>词库不出本机</span>
+            </div>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <div class="sound-sculpture">
+              <span class="sculpture-ring ring-1"></span>
+              <span class="sculpture-ring ring-2"></span>
+              <span class="sculpture-ring ring-3"></span>
+              <span class="sculpture-glow"></span>
+              <span class="sculpture-core"><svg class="icon"><use href="#i-speaker"></use></svg></span>
+              <span class="floating-word word-a">serendipity</span>
+              <span class="floating-word word-b">break the ice</span>
+              <span class="floating-word word-c">resilient</span>
+              <span class="floating-word word-d">meticulous</span>
+            </div>
+            <p class="hero-caption"><span class="typing-dot"></span><span id="hero-caption-text">正在等待你的词库</span></p>
+          </div>
+        </section>
+
+        <div class="setup-grid">
+          <div class="setup-main">
+            <section class="card library-card">
+              <div class="card-heading">
+                <div>
+                  <p class="section-kicker">STEP 01 · YOUR WORDS</p>
+                  <h2>我的词库</h2>
+                </div>
+                <div class="heading-meta">
+                  <span class="count-pill" id="library-total-pill">0 条</span>
+                  <button class="icon-btn" id="btn-format-help" title="查看支持格式" aria-label="查看支持格式">
+                    <svg class="icon"><use href="#i-info"></use></svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="上传词库文件或拍照识别">
+                <span class="drop-icon"><svg class="icon"><use href="#i-upload"></use></svg></span>
+                <div class="drop-copy">
+                  <strong>拖入 .txt / .csv / 图片，或点击选择文件</strong>
+                  <span>可拍照识别词表 · 每行一条 · 推荐 <code>word | english definition | 中文</code></span>
+                </div>
+                <div class="drop-actions">
+                  <button type="button" class="btn btn-primary btn-sm" id="btn-photo">
+                    <svg class="icon"><use href="#i-camera"></use></svg>拍照 / 图片
+                  </button>
+                  <button type="button" class="btn btn-ghost btn-sm" id="btn-choose-file">选择文件</button>
+                  <button type="button" class="btn btn-ghost btn-sm" id="btn-paste">粘贴文本</button>
+                  <button type="button" class="btn btn-ghost btn-sm" id="btn-sample">载入示例</button>
+                </div>
+              </div>
+
+              <div class="missing-banner" id="missing-banner" hidden>
+                <span class="missing-icon"><svg class="icon"><use href="#i-info"></use></svg></span>
+                <p id="missing-text">有 0 条缺少英文释义，暂时无法进入释义题。</p>
+                <button class="btn btn-ghost btn-sm" id="btn-fetch-missing">一键联网补全</button>
+              </div>
+
+              <div class="library-toolbar" id="library-toolbar" hidden>
+                <div class="search-box">
+                  <svg class="icon"><use href="#i-search"></use></svg>
+                  <input id="library-search" type="search" placeholder="搜索单词、词组或释义" autocomplete="off">
+                </div>
+                <div class="filter-chips" id="filter-chips" role="group" aria-label="筛选词库">
+                  <button class="chip is-active" data-filter="all">全部 <span data-count="all">0</span></button>
+                  <button class="chip" data-filter="word">单词 <span data-count="word">0</span></button>
+                  <button class="chip" data-filter="phrase">词组 <span data-count="phrase">0</span></button>
+                  <button class="chip" data-filter="missing">缺释义 <span data-count="missing">0</span></button>
+                  <button class="chip" data-filter="starred">重点 <span data-count="starred">0</span></button>
+                </div>
+                <div class="toolbar-actions">
+                  <button class="btn btn-ghost btn-sm" id="btn-add-item">
+                    <svg class="icon"><use href="#i-plus"></use></svg>添加
+                  </button>
+                  <button class="btn btn-ghost btn-sm" id="btn-fetch-defs">
+                    <svg class="icon"><use href="#i-refresh"></use></svg>补全释义
+                  </button>
+                  <button class="btn btn-ghost btn-sm" id="btn-export">
+                    <svg class="icon"><use href="#i-download"></use></svg>导出
+                  </button>
+                  <button class="btn btn-quiet btn-sm btn-danger-text" id="btn-clear-library">清空</button>
+                </div>
+              </div>
+
+              <div class="library-list" id="library-list" aria-live="polite"></div>
+              <div class="library-footer" id="library-footer" hidden>
+                <span id="library-visible-count">显示 0 条</span>
+                <span class="legend"><svg class="icon star-icon"><use href="#i-star"></use></svg>星标为重点词，优先出题</span>
+              </div>
+            </section>
+          </div>
+
+          <aside class="setup-side">
+            <section class="card session-card">
+              <div class="card-heading compact">
+                <div>
+                  <p class="section-kicker">STEP 02 · START</p>
+                  <h2>本次测试</h2>
+                </div>
+                <span class="time-pill" id="session-time">约 10 分钟</span>
+              </div>
+
+              <div class="rounds">
+                <div class="round-row">
+                  <span class="round-index">01</span>
+                  <span class="round-icon"><svg class="icon"><use href="#i-book"></use></svg></span>
+                  <div class="round-main">
+                    <strong>词组释义</strong>
+                    <span>听英文释义 · 写词组</span>
+                  </div>
+                  <span class="round-count" id="round-count-phrases">3 题</span>
+                </div>
+                <div class="round-row">
+                  <span class="round-index">02</span>
+                  <span class="round-icon"><svg class="icon"><use href="#i-speaker"></use></svg></span>
+                  <div class="round-main">
+                    <strong>单词释义</strong>
+                    <span>听英文释义 · 写单词</span>
+                  </div>
+                  <span class="round-count" id="round-count-words">8 题</span>
+                </div>
+                <div class="round-row">
+                  <span class="round-index">03</span>
+                  <span class="round-icon"><svg class="icon"><use href="#i-headphones"></use></svg></span>
+                  <div class="round-main">
+                    <strong>单词听写</strong>
+                    <span>听发音 · 写拼写</span>
+                  </div>
+                  <span class="round-count" id="round-count-dictation">10 题</span>
+                </div>
+              </div>
+
+              <div class="readiness" id="readiness"></div>
+
+              <button class="btn btn-primary btn-block btn-start" id="btn-start">
+                <svg class="icon"><use href="#i-play"></use></svg>
+                <span id="btn-start-label">开始语音测试</span>
+              </button>
+              <p class="micro-note" id="start-note">建议佩戴耳机。语音由浏览器英文语音合成。</p>
+            </section>
+
+            <section class="card history-card" id="history-card">
+              <div class="card-heading compact">
+                <div>
+                  <p class="section-kicker">PROGRESS</p>
+                  <h2>最近成绩</h2>
+                </div>
+                <span class="history-best" id="history-best"></span>
+              </div>
+              <div id="history-list"></div>
+            </section>
+
+            <div class="quote-card">
+              <svg class="icon quote-icon"><use href="#i-sparkles"></use></svg>
+              <p>“能听出来，才是真的记住了。”</p>
+              <span>— 词声练习室</span>
+            </div>
+          </aside>
+        </div>
+
+        <footer class="site-footer">
+          <span>词声 · 给 YTJ 的语音默写练习室</span>
+          <span>释义来源：dictionaryapi.dev · Wiktionary · Datamuse</span>
+          <span>OCR：Tesseract.js 本地识别</span>
+          <span>所有词库、照片与成绩只在本机处理</span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ============================ 测试 ============================ -->
+    <section class="screen" id="screen-quiz" aria-labelledby="question-title">
+      <div class="quiz-shell">
+        <div class="quiz-topbar">
+          <button class="btn btn-quiet btn-sm" id="btn-exit-quiz">
+            <svg class="icon"><use href="#i-x"></use></svg>退出
+          </button>
+          <div class="quiz-progress">
+            <div class="quiz-progress-labels">
+              <span id="stage-label">第一轮 · 词组释义</span>
+              <span id="question-counter">第 1 / 3 题</span>
+            </div>
+            <div class="progress-track"><span id="overall-progress"></span></div>
+          </div>
+          <div class="quiz-score"><span id="quiz-score">0</span><small>分</small></div>
+        </div>
+
+        <div class="quiz-layout">
+          <div class="quiz-main">
+            <div class="question-card card" id="question-card">
+              <div class="question-topline">
+                <span class="mode-chip" id="mode-chip">释义 → 词组</span>
+                <span class="pos-chip" id="pos-chip" hidden>介词短语</span>
+              </div>
+              <h1 class="question-title" id="question-title">听英文释义，写出对应的词组</h1>
+              <p class="question-sub" id="question-sub">英文释义会播放一次，你可以随时重听。</p>
+
+              <div class="audio-stage" id="audio-stage">
+                <div class="audio-orbit" id="audio-orbit">
+                  <span class="orbit-ring orbit-a"></span>
+                  <span class="orbit-ring orbit-b"></span>
+                  <span class="orbit-ring orbit-c"></span>
+                  <button class="speaker-button" id="btn-play" aria-label="播放语音">
+                    <svg class="icon speaker-icon" id="speaker-icon"><use href="#i-speaker"></use></svg>
+                    <span class="equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+                  </button>
+                </div>
+                <div class="audio-status" id="audio-status" aria-live="polite">点击扬声器播放英文释义</div>
+                <div class="audio-controls">
+                  <button class="btn btn-ghost btn-sm" id="btn-replay">
+                    <svg class="icon"><use href="#i-refresh"></use></svg>再听一遍
+                  </button>
+                  <button class="btn btn-ghost btn-sm" id="btn-slow">
+                    <svg class="icon"><use href="#i-wave"></use></svg>慢速
+                  </button>
+                </div>
+              </div>
+
+              <form class="answer-form" id="answer-form" autocomplete="off" novalidate>
+                <div class="answer-field">
+                  <label class="sr-only" for="answer-input">写下你听到的答案</label>
+                  <input class="answer-input" id="answer-input" type="text" placeholder="在这里写下你听到的词组" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="100">
+                  <button class="btn btn-primary" type="submit" id="btn-submit-answer">提交</button>
+                </div>
+                <div class="answer-aux">
+                  <button class="link-btn" type="button" id="btn-hint">首字母提示</button>
+                  <button class="link-btn muted" type="button" id="btn-giveup">不会，看答案</button>
+                  <span class="enter-note">按 Enter 提交</span>
+                </div>
+                <div class="hint-box" id="hint-box" hidden></div>
+              </form>
+
+              <div class="feedback" id="feedback" aria-live="polite" aria-atomic="true" hidden></div>
+            </div>
+          </div>
+
+          <aside class="quiz-aside">
+            <section class="card quiz-stage-card">
+              <p class="section-kicker">ROUND MAP</p>
+              <h3 id="stage-map-title">第一轮</h3>
+              <div class="stage-dots" id="stage-dots"></div>
+              <div class="stage-legend">
+                <span class="dot correct"></span>答对
+                <span class="dot wrong"></span>答错
+                <span class="dot current"></span>当前
+              </div>
+            </section>
+            <section class="card quiz-tip-card">
+              <span class="tip-icon"><svg class="icon"><use href="#i-sparkles"></use></svg></span>
+              <h3>听不清怎么办？</h3>
+              <p>先用慢速再听一遍。仍不确定时，可以点“首字母提示”。留意冠词、单复数和容易混淆的字母。</p>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ 成绩 ============================ -->
+    <section class="screen" id="screen-result" aria-labelledby="result-title">
+      <div class="result-shell">
+        <section class="result-hero card">
+          <div class="score-ring" id="score-ring">
+            <div class="score-ring-inner">
+              <strong id="result-percent">0%</strong>
+              <span id="result-fraction">0 / 0</span>
+            </div>
+          </div>
+          <div class="result-copy">
+            <p class="section-kicker">SESSION COMPLETE</p>
+            <h1 id="result-title">这一轮完成了</h1>
+            <p class="result-subtitle" id="result-subtitle"></p>
+            <div class="result-meta" id="result-meta"></div>
+            <div class="result-actions">
+              <button class="btn btn-primary" id="btn-retry-mistakes">重练错题</button>
+              <button class="btn btn-ghost" id="btn-new-session">再测一组</button>
+              <button class="btn btn-quiet" id="btn-back-library">返回词库</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="result-grid">
+          <section class="card">
+            <div class="card-heading compact">
+              <div>
+                <p class="section-kicker">BREAKDOWN</p>
+                <h2>分轮成绩</h2>
+              </div>
+            </div>
+            <div class="breakdown" id="result-breakdown"></div>
+          </section>
+
+          <section class="card">
+            <div class="card-heading compact">
+              <div>
+                <p class="section-kicker">REVIEW</p>
+                <h2>需要再看一眼</h2>
+              </div>
+              <span class="count-pill" id="mistake-count">0 个</span>
+            </div>
+            <div class="mistake-list" id="result-mistakes"></div>
+          </section>
+        </div>
+
+        <footer class="site-footer">
+          <span>词声 · 听写记录已保存在本机</span>
+          <span>错题可以随时重练</span>
+        </footer>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="mobile-cta" id="mobile-cta">
+    <div class="mobile-cta-copy">
+      <strong id="mobile-cta-title">词库还是空的</strong>
+      <span id="mobile-cta-sub">拍照或导入你的第一组词</span>
+    </div>
+    <button class="btn btn-primary" id="btn-mobile-start">导入词表</button>
+  </div>
+
+  <!-- ============================ 弹窗 ============================ -->
+
+  <dialog class="modal" id="settings-dialog">
+    <form method="dialog" class="modal-card settings-card">
+      <div class="modal-head">
+        <div>
+          <p class="section-kicker">PREFERENCES</p>
+          <h2>设置</h2>
+        </div>
+        <button class="icon-btn" value="close" aria-label="关闭设置">
+          <svg class="icon"><use href="#i-x"></use></svg>
+        </button>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label" for="voice-select">英文语音</label>
+        <select class="select" id="voice-select"></select>
+        <p class="setting-help" id="voice-help">推荐 Natural / Google / Microsoft 英文语音，发音更自然。</p>
+        <button type="button" class="btn btn-ghost btn-sm" id="btn-test-voice">
+          <svg class="icon"><use href="#i-volume"></use></svg>试听语音
+        </button>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label" for="rate-range">朗读速度 <span id="rate-value">0.90×</span></label>
+        <input type="range" id="rate-range" min="0.6" max="1.2" step="0.05" value="0.9">
+        <div class="range-ends"><span>慢</span><span>快</span></div>
+      </div>
+
+      <div class="setting-grid">
+        <div class="setting-group">
+          <label class="setting-label" for="phrase-count">词组释义题量</label>
+          <select class="select" id="phrase-count">
+            <option value="2">2 题</option>
+            <option value="3">3 题</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label class="setting-label" for="word-count">单词释义题量</label>
+          <select class="select" id="word-count">
+            <option value="7">7 题</option>
+            <option value="8">8 题</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label class="setting-label" for="dictation-repeats">听写播报次数</label>
+          <select class="select" id="dictation-repeats">
+            <option value="1">1 次</option>
+            <option value="2">2 次</option>
+            <option value="3">3 次</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting-switches">
+        <label class="switch-row">
+          <span><strong>自动播放</strong><small>进入题目后自动朗读</small></span>
+          <input type="checkbox" id="auto-play" class="switch">
+          <i aria-hidden="true"></i>
+        </label>
+        <label class="switch-row">
+          <span><strong>优先复习易错词</strong><small>出过错的词会更容易被抽到</small></span>
+          <input type="checkbox" id="prioritize-mistakes" class="switch">
+          <i aria-hidden="true"></i>
+        </label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-quiet btn-danger-text" id="btn-reset-progress">清除学习记录</button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" value="close">完成</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="edit-dialog">
+    <form class="modal-card" id="edit-form" novalidate>
+      <div class="modal-head">
+        <div>
+          <p class="section-kicker" id="edit-kicker">WORD DETAIL</p>
+          <h2 id="edit-title">编辑词条</h2>
+        </div>
+        <button type="button" class="icon-btn" id="btn-edit-close" aria-label="关闭">
+          <svg class="icon"><use href="#i-x"></use></svg>
+        </button>
+      </div>
+
+      <input type="hidden" id="edit-id">
+      <label class="field">
+        <span>单词或词组</span>
+        <input id="edit-term" type="text" autocomplete="off" spellcheck="false" maxlength="80" placeholder="例如：serendipity 或 break the ice">
+      </label>
+      <label class="field">
+        <span>英文释义 <em>用于语音出题</em></span>
+        <textarea id="edit-definition" rows="4" placeholder="例如：The happy accident of finding something valuable when not looking for it."></textarea>
+      </label>
+      <label class="field">
+        <span>中文释义 <em>可选，答题后显示</em></span>
+        <input id="edit-chinese" type="text" autocomplete="off" maxlength="120" placeholder="例如：意外发现珍奇事物的能力">
+      </label>
+      <label class="checkline">
+        <input type="checkbox" id="edit-starred">
+        <span>标记为重点词，优先出题</span>
+      </label>
+      <p class="edit-source" id="edit-source"></p>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-quiet btn-danger-text" id="btn-delete-item">删除</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-ghost" id="btn-fetch-one">联网获取释义</button>
+        <button type="submit" class="btn btn-primary" id="btn-save-item">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal modal-wide" id="import-dialog">
+    <form class="modal-card" id="import-form" novalidate>
+      <div class="modal-head">
+        <div>
+          <p class="section-kicker">IMPORT</p>
+          <h2>粘贴或检查词库</h2>
+        </div>
+        <button type="button" class="icon-btn" id="btn-import-close" aria-label="关闭">
+          <svg class="icon"><use href="#i-x"></use></svg>
+        </button>
+      </div>
+      <p class="modal-intro">每行一条。英文释义可省略，之后再联网补全或用中文释义辅助记忆。</p>
+      <textarea class="import-textarea" id="import-text" rows="12" spellcheck="false" placeholder="serendipity | The happy accident of finding something valuable. | 意外发现
+break the ice | To make people feel more relaxed. | 打破僵局
+resilient"></textarea>
+      <div class="import-preview" id="import-preview"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-quiet" id="btn-import-cancel">取消</button>
+        <span class="spacer"></span>
+        <button type="submit" class="btn btn-primary" id="btn-import-confirm" disabled>导入词库</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal modal-wide" id="ocr-dialog">
+    <div class="modal-card ocr-card">
+      <div class="modal-head">
+        <div>
+          <p class="section-kicker">PHOTO → WORDS</p>
+          <h2>拍照识别词表</h2>
+        </div>
+        <button type="button" class="icon-btn" id="btn-ocr-close" aria-label="关闭">
+          <svg class="icon"><use href="#i-x"></use></svg>
+        </button>
+      </div>
+      <p class="modal-intro">拍正、拍清楚，识别在本机完成，照片不会上传。识别结果会先放进文本框，确认后再导入。</p>
+      <div class="ocr-stage">
+        <div class="ocr-preview-wrap">
+          <img id="ocr-preview" alt="待识别的词表照片">
+        </div>
+        <div class="ocr-status-box">
+          <div class="ocr-status-line">
+            <span class="spinner" id="ocr-spinner" aria-hidden="true" hidden></span>
+            <span id="ocr-status" aria-live="polite">准备识别…</span>
+          </div>
+          <div class="fetch-progress"><span id="ocr-bar"></span></div>
+          <p class="ocr-hint" id="ocr-hint">识别完成后可以核对、修改，再导入词库。</p>
+          <div class="ocr-actions">
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-ocr-retry" disabled>
+              <svg class="icon"><use href="#i-refresh"></use></svg>重新识别
+            </button>
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-ocr-replace">
+              <svg class="icon"><use href="#i-camera"></use></svg>换一张
+            </button>
+          </div>
+        </div>
+      </div>
+      <label class="field">
+        <span>识别结果 <em>可直接修改</em></span>
+        <textarea class="import-textarea ocr-text" id="ocr-text" rows="6" spellcheck="false" disabled placeholder="识别出的单词、词组和中文释义会出现在这里…"></textarea>
+      </label>
+      <div class="import-preview" id="ocr-parse-preview">
+        <div class="preview-stats"><span class="preview-chip">等待识别</span></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-quiet" id="btn-ocr-cancel">取消</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-primary" id="btn-ocr-import" disabled>导入识别结果</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal modal-wide" id="help-dialog">
+    <div class="modal-card help-card">
+      <div class="modal-head">
+        <div>
+          <p class="section-kicker">HOW IT WORKS</p>
+          <h2>使用说明</h2>
+        </div>
+        <button class="icon-btn" id="btn-help-close" aria-label="关闭">
+          <svg class="icon"><use href="#i-x"></use></svg>
+        </button>
+      </div>
+      <div class="help-body">
+        <section>
+          <h3><span>01</span>上传或拍照</h3>
+          <p>支持 .txt / .csv 文件、拖拽、直接粘贴，也可以拍照或选择图片。每行一条，英文释义和中文释义都可以省略。没有英文释义的词不会进入前两轮，但可以进入听写。</p>
+          <p>拍照识别在本机完成，照片不会上传；识别结果会先放进可编辑的文本框里，确认无误后再导入。拍照时尽量拍正、光线均匀、只取词表区域，印刷体识别更准。</p>
+        </section>
+        <section>
+          <h3><span>02</span>语音出题</h3>
+          <p>系统会优先挑选较长、较复杂、带释义的词条，星标词和易错词权重更高。第一轮听释义写词组，第二轮听释义写单词，第三轮听发音写拼写。</p>
+        </section>
+        <section>
+          <h3><span>03</span>听写与判分</h3>
+          <p>英文释义不会在屏幕上显示。播报时，释义里出现的答案词会自动替换成 “blank”，避免泄露。大小写、多余空格、常见英美拼写变体不会误判。</p>
+        </section>
+        <section>
+          <h3><span>04</span>推荐导入格式</h3>
+          <pre>serendipity | The happy accident of finding something valuable. | 意外发现珍奇事物的能力
+break the ice | To make people feel more relaxed. | 打破僵局
+resilient | Able to recover quickly from difficulties. | 有韧性的
+ubiquitous</pre>
+          <p>也支持 Tab 分隔、CSV、<code>word: definition</code>、<code>word - definition</code>，以及英文后直接接中文。</p>
+        </section>
+        <section>
+          <h3><span>05</span>语音与数据</h3>
+          <p>语音由浏览器英文语音合成提供。如果发音不自然，请在设置中换一个英文语音，或在系统中安装英语语音包。词库、成绩、释义缓存和照片处理都只在本机进行；联网补全释义时会向公共词典接口查询词条。</p>
+        </section>
+      </div>
+      <div class="modal-actions">
+        <span class="spacer"></span>
+        <button class="btn btn-primary" id="btn-help-ok">知道了</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal modal-sm" id="confirm-dialog">
+    <div class="modal-card confirm-card">
+      <span class="confirm-icon" id="confirm-icon"><svg class="icon"><use href="#i-info"></use></svg></span>
+      <h2 id="confirm-title">确定吗？</h2>
+      <p id="confirm-body"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="confirm-cancel">取消</button>
+        <button class="btn btn-primary" id="confirm-ok">确定</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal modal-sm" id="fetch-dialog">
+    <div class="modal-card fetch-card">
+      <div class="fetch-head">
+        <span class="spinner" aria-hidden="true"></span>
+        <div>
+          <p class="section-kicker">DEFINITIONS</p>
+          <h2>正在补全英文释义</h2>
+        </div>
+      </div>
+      <p class="fetch-status" id="fetch-status">正在准备…</p>
+      <div class="fetch-progress"><span id="fetch-bar"></span></div>
+      <p class="fetch-current" id="fetch-current"></p>
+      <div class="modal-actions">
+        <span class="spacer"></span>
+        <button class="btn btn-ghost" id="btn-fetch-cancel">取消</button>
+      </div>
+    </div>
+  </dialog>
+
+  <input type="file" id="file-input" accept=".txt,.csv,.tsv,image/*,text/plain,text/csv" hidden>
+  <input type="file" id="photo-input" accept="image/*" hidden>
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+
+  <noscript>
+    <div class="noscript">词声需要启用 JavaScript 才能使用。</div>
+  </noscript>
+
+  <script src="vendor/tesseract/tesseract.min.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/dictionary.js"></script>
+  <script src="js/speech.js"></script>
+  <script src="js/sample-data.js"></script>
+  <script src="js/ocr.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
