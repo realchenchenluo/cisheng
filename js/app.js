@@ -2880,7 +2880,7 @@
     }
     document.title = name === 'quiz'
       ? '词声 · 测试中'
-      : (name === 'result' ? '词声 · 本轮成绩' : '词声 · YTJ 语音默写');
+      : (name === 'result' ? '词声 · 本轮成绩' : '词声 · 语音默写');
     try {
       window.scrollTo({ top: 0, behavior: 'auto' });
     } catch (error) {

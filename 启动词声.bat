@@ -1,7 +1,7 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-title WordVoice - YTJ
+title WordVoice
 set "PORT=8787"
 
 where python >nul 2>nul
